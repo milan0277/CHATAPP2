@@ -42,60 +42,23 @@ app.use(cors(corsOptions))
 const users=new Map()
 
 io.on("connection",(socket)=>{
-  console.log('user connected',socket.id)
-  // console.log("users at connection created time",users)
 
   socket.on("register",(userId)=>{
-    console.log("registerUserId :",userId)
     users.set(userId,socket.id)
-    console.log(users)
   })
 
 
   socket.on('message',({m,receiverId,senderId})=>{
-    // console.log(m,image,audio,receiverId)
-    console.log("socket",m,receiverId,senderId)
     const receiverSocketId=users.get(receiverId)
-    // console.log(u)
-   
-    
-    // console.log("receiverSoketId:",receiverSocketId)
-    // if(m==="" && !audio){
-    //   if(receiverSocketId){
-    //     // console.log("!m")
-    //     io.to(receiverSocketId).emit("data",{image,senderId})
-    //   }
-    // }
-    // else if(m && !image){
-    //   if(receiverSocketId){
-    //     // console.log("!image")
-    //     io.to(receiverSocketId).emit("data",{m,senderId})  
-    //   }
-    // }
-    // else if(!m && !image && audio){
-    //   if(receiverSocketId){
-    //     // console.log("!image")
-    //     io.to(receiverSocketId).emit("data",{audio,senderId})
-    //   }
-    // }
-    // else{
+
       if(receiverSocketId){
-        // console.log('both')
         io.to(receiverSocketId).emit("data",{m,senderId})
-      }
-      else{
-        console.log("user is not online")
-      }
-    // }
-   
+      }   
   })
    
 
   socket.on("deletemessage",({mId,receiverId})=>{
-    console.log("users",users)
-    console.log(mId,receiverId)
     let receiverSocektId = users.get(receiverId)
-    console.log(receiverSocektId)
     if(receiverSocektId){
       io.to(receiverSocektId).emit("dMessage",mId)
     }
@@ -108,7 +71,6 @@ io.on("connection",(socket)=>{
         users.delete(key)
       }
     })
-    console.log('user disconnected',socket.id)
   })
 
 })

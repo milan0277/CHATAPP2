@@ -4,7 +4,7 @@ const genToken=async(res,id)=>{
     try{
         const token = jwt.sign({id},process.env.SECERET_KEY,{expiresIn:"1d"})
         // console.log("token :",token)
-        return res.cookie("jwtCookie",token,{ maxAge: 24 * 60 * 60 * 1000, httpOnly: true })
+        return res.cookie("jwtCookie",token,{ maxAge: 24 * 60 * 60 * 1000, httpOnly: true ,secure: true, sameSite: 'None'})
     }
     catch(err){
         console.log(err)

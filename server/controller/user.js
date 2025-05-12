@@ -67,7 +67,7 @@ const signup=async(req,res)=>{
 const logout = (req,res)=>{
     try{
         const cookie = req.cookies.jwtCookie;
-        // console.log("cookies :",cookie)
+        console.log("cookies :",cookie)
         return res.status(200).clearCookie("jwtCookie").json({message:"logout successfull"})
     }
     catch(err){

@@ -21,15 +21,8 @@ const sendMessage = async (req, res) => {
   try {
     const senderId = req._id;
     const receiverId = req.params.id;
-    // console.log(req?.files?.audio[0]?.filename)
-    // const imagename=req?.files?.image?req?.files?.image[0]?.filename:null
-    // console.log(imagename)
-    // const audioname=req?.files?.audio?req?.files?.audio[0]?.filename:null
-    // console.log(imagename)
-    // console.log(audioname)
-    const message = req.body==undefined ? req?.body?.message : null;
-    console.log(req.body)
-    console.log("message:", message);
+
+    const message = req.body?.message ? req?.body?.message : null;
 
     const attachment = req?.file ? req?.file?.filename : null;
     console.log("attachment :", attachment);
@@ -37,7 +30,7 @@ const sendMessage = async (req, res) => {
     if (!senderId) {
       return res.status(400).json({ error: "u are not a valid user" });
     }
-    // console.log(message)
+
     if (!receiverId) {
       return res.status(400).json({ error: "receiverID is required" });
     }
@@ -45,7 +38,6 @@ const sendMessage = async (req, res) => {
     if (!message && !attachment) {
       return res.status(400).json({ error: "send something" });
     }
-
 
     let existConversation = await conversationModel.findOne({
       participants: { $all: [senderId, receiverId] },
@@ -57,26 +49,23 @@ const sendMessage = async (req, res) => {
       });
     }
 
+    if (!message) {
+      const newMessage = await messageModel.create({
+        convoId: existConversation._id,
+        senderId,
+        receiverId,
+        attachment,
+      });
 
-    if(!message){
-        const newMessage = await messageModel.create({
-      convoId: existConversation._id,
-      senderId,
-      receiverId,
-      attachment,
-    });
+      if (newMessage) {
+        existConversation.messages.push(newMessage);
+      }
 
-     if (newMessage) {
-      existConversation.messages.push(newMessage);
+      await existConversation.save();
+      return res
+        .status(200)
+        .json({ messge: "message send successfully", convo: newMessage });
     }
-
-     await existConversation.save();
-    return res
-      .status(200)
-      .json({ messge: "message send successfully", convo: newMessage });
-
-    }
-    
 
     const newMessage = await messageModel.create({
       convoId: existConversation._id,
@@ -84,7 +73,6 @@ const sendMessage = async (req, res) => {
       receiverId,
       message,
     });
-    // console.log(newMessage)
 
     if (newMessage) {
       existConversation.messages.push(newMessage);

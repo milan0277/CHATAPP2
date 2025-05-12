@@ -17,12 +17,15 @@ const Login = () => {
     reset,
   } = useForm();
 
+
   async function onSubmit(data) {
     try {
       const loginRes = await axios.post(
-        `${import.meta.env.VITE_API_URL}/app/api/login`,
+        ` ${import.meta.env.VITE_API_URL}/app/api/login`,
         data,
-        { withCredentials: true }
+        {
+  withCredentials: true, 
+}
       );
       if (loginRes?.status == 200) {
         reset();
@@ -34,7 +37,7 @@ const Login = () => {
         navigate("/chatPage");
       }
     } catch (err) {
-      toast.error(err?.response?.data?.message);
+      toast.error(err?.response?.data?.message || "login Failed");
     }
   }
 

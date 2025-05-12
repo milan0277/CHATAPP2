@@ -27,6 +27,7 @@ const Navbar = () => {
         `${import.meta.env.VITE_API_URL}/app/api/logout`,
         { withCredentials: true }
       );
+      console.log(logoutRes)
 
       if (logoutRes?.status == 200) {
         toast.success(logoutRes?.data?.message);
